@@ -40,8 +40,21 @@ export const AuthService = {
       body: JSON.stringify({ email, password }),
     });
 
+    // --- LOG DE AUDITORÍA: Respuesta cruda ---
+    console.group("📡 [AuthService] Respuesta cruda del Backend");
+    console.log("Data completa recibida:", data);
+    console.log("Estructura de usuario:", data.user);
+    console.log("Campo user.group detectado:", data.user?.group);
+    console.log("Apps totales:", data.apps);
+    console.groupEnd();
+    // ------------------------------------------
+
     // Guardar el token en el almacenamiento local
     localStorage.setItem("tracesync_token", data.token);
+
+    if (!data || !data.user) {
+      throw new Error("Respuesta del servidor inválida: Usuario no encontrado");
+    }
 
     return {
       user: data.user,
