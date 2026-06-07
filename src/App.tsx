@@ -104,7 +104,6 @@ export default function App() {
         setScreen={setScreen}
         apps={allowedApps}
         selectedModule={selectedModule}
-        //onLoginSuccess={setSession}
         onLoginSuccess={(data) => {
           setSession(data);
           setScreen("HUB");

@@ -251,8 +251,6 @@ export default function AppRouter({
           loading={loading}
           error={error}
           onVerify={handleVerify}
-          //onCancel={() => setScreen("HUB")}
-          //onBack={() => setScreen("HUB")}
         />
       );
 
