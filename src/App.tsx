@@ -17,6 +17,7 @@ const DEFAULT_TENANT = {
 };*/
 
 export default function App() {
+  console.log("🚀 [App.tsx] Renderizando App principal...");
   const [session, setSession] = useState<AuthSessionState | null>(() => {
     const data = SessionService.get();
     console.group("🔍 [DEBUG] Carga de Sesión Inicial");
