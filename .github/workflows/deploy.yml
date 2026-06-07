@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Clean previous build
+        run: rm -rf dist
       - name: Build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
