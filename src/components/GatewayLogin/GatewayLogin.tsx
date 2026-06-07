@@ -50,6 +50,7 @@ export default function GatewayLogin({ onLoginSuccess }: GatewayLoginProps) {
       // ------------------------------
 
       onLoginSuccess(sessionData);
+      console.log("✅ [GatewayLogin] Inicio de sesión exitoso para:", email);
     } catch (err: unknown) {
       //console.error("❌ [GatewayLogin] Error capturado:", err);
       if (err instanceof Error) {
