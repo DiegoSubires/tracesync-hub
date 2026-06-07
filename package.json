@@ -9,9 +9,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -m \"Despliegue automatico: codigo actualizado\"",
-    "g": "git add . && git commit -m \"$1\" && git push origin main"
+    "deploy": "git add . && git commit -m \"Despliegue rápido: $(date +'%Y-%m-%d %H:%M:%S')\" && git push origin main"
   },
   "dependencies": {
     "react": "^19.2.6",
