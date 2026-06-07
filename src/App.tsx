@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { LayoutHub } from "./components/LayoutHub/LayoutHub";
 import AppRouter from "./components/AppRouter/AppRouter";
 import { type AuthSessionState, type UserSession } from "./types/domain";
@@ -17,10 +17,10 @@ const DEFAULT_TENANT = {
 };*/
 
 export default function App() {
-  /*const [session, setSession] = useState<AuthSessionState | null>(() =>
+  const [session, setSession] = useState<AuthSessionState | null>(() =>
     SessionService.get(),
-  );*/
-  const [session, setSession] = useState<AuthSessionState | null>(() => {
+  );
+  /*const [session, setSession] = useState<AuthSessionState | null>(() => {
     const data = SessionService.get();
     // LOG: Auditoría de carga inicial
     console.group("🔍 [DEBUG] Carga de Sesión");
@@ -31,7 +31,7 @@ export default function App() {
     );
     console.groupEnd();
     return data;
-  });
+  });*/
 
   const [activeOperator, setActiveOperator] = useState<UserSession | null>(
     null,
@@ -40,6 +40,27 @@ export default function App() {
   const [screen, setScreen] = useState<
     "COMPANY_LOGIN" | "HUB" | "MODULE_OPERATOR_LOGIN"
   >("COMPANY_LOGIN");
+
+  const allowedApps = useMemo(() => {
+    if (!session?.apps) return [];
+
+    if (!activeOperator) return [];
+
+    console.group("🛡️ [DEBUG] Control de Acceso");
+    console.log("Grupo del Operador:", activeOperator.group);
+
+    const filtered = session.apps.filter(
+      (app) => app.appId === activeOperator.group,
+    );
+
+    console.log(
+      "Apps permitidas:",
+      filtered.map((a) => a.appId),
+    );
+    console.groupEnd();
+
+    return filtered;
+  }, [session?.apps, activeOperator]);
 
   const handleOperatorVerifySuccess = (operator: UserSession) => {
     setActiveOperator(operator);
@@ -51,9 +72,16 @@ export default function App() {
     }
   };
 
+  /*const handleLogout = () => {
+    SessionService.clearSession();
+    setSession(null);
+    setScreen("COMPANY_LOGIN");
+  };*/
+
   const handleLogout = () => {
     SessionService.clearSession();
     setSession(null);
+    setActiveOperator(null);
     setScreen("COMPANY_LOGIN");
   };
 
@@ -62,7 +90,7 @@ export default function App() {
     setSelectedModule(null);
   };*/
 
-  const currentTenant = session?.tenant || DEFAULT_TENANT;
+  //const currentTenant = session?.tenant || DEFAULT_TENANT;
 
   const handleSelectModule = (appId: string) => {
     const app = session?.apps.find((a) => a.appId === appId);
@@ -106,7 +134,7 @@ export default function App() {
   );
 }*/
 
-  if (!session) {
+  /*if (!session) {
     return (
       <AppRouter
         screen="COMPANY_LOGIN"
@@ -138,6 +166,47 @@ export default function App() {
         screen={screen}
         setScreen={setScreen}
         apps={session.apps || []}
+        selectedModule={selectedModule}
+        onLoginSuccess={setSession}
+        onSelectModule={handleSelectModule}
+        onOperatorVerifySuccess={handleOperatorVerifySuccess}
+        onExitModule={() => setScreen("HUB")}
+        onLogout={handleLogout}
+      />
+    </LayoutHub>
+  );*/
+
+  if (!session) {
+    return (
+      <AppRouter
+        screen="COMPANY_LOGIN"
+        setScreen={setScreen}
+        apps={[]}
+        selectedModule={null}
+        onLoginSuccess={(data) => {
+          setSession(data);
+          setScreen("HUB");
+        }}
+        onSelectModule={handleSelectModule}
+        onOperatorVerifySuccess={handleOperatorVerifySuccess}
+        onExitModule={() => setScreen("HUB")}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
+  return (
+    <LayoutHub
+      onLogout={handleLogout}
+      onGoBack={() => setScreen("HUB")}
+      isPinScreen={screen === "MODULE_OPERATOR_LOGIN"}
+      tenant={session.tenant || DEFAULT_TENANT}
+      user={session.user}
+    >
+      <AppRouter
+        screen={screen}
+        setScreen={setScreen}
+        apps={allowedApps} // <--- Usamos la lista filtrada
         selectedModule={selectedModule}
         onLoginSuccess={setSession}
         onSelectModule={handleSelectModule}
