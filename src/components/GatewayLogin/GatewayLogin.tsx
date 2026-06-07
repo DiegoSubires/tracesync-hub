@@ -37,10 +37,18 @@ export default function GatewayLogin({ onLoginSuccess }: GatewayLoginProps) {
 
     try {
       const sessionData = await AuthService.login(email, password);
-      /*console.log(
-        "✅ [GatewayLogin] Login exitoso, datos recibidos:",
-        sessionData,
-      );*/
+
+      // --- NUEVO LOG DE AUDITORÍA ---
+      console.group("🔑 [GatewayLogin] Respuesta del Servidor");
+      console.log("Usuario:", sessionData.user?.name);
+      console.log("Grupos/Permisos del usuario:", sessionData.user?.group); // <--- Verificar qué devuelve el back
+      console.log(
+        "Apps totales recibidas:",
+        sessionData.apps?.map((a) => a.appId),
+      );
+      console.groupEnd();
+      // ------------------------------
+
       onLoginSuccess(sessionData);
     } catch (err: unknown) {
       //console.error("❌ [GatewayLogin] Error capturado:", err);

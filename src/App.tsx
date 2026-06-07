@@ -42,19 +42,25 @@ export default function App() {
   >("COMPANY_LOGIN");
 
   const allowedApps = useMemo(() => {
-    // El usuario logueado tiene acceso a las apps definidas en su campo 'group'
-    if (!session?.apps) return [];
+    if (!session?.apps || !session?.user?.group) return [];
 
-    console.group("🛡️ [DEBUG] Carga de catálogo corporativo");
+    console.group("🛡️ [App.tsx] Filtrado de Acceso");
+    const userAllowedGroups = session.user.group; // Array de IDs permitidos
+    console.log("Grupos permitidos para el usuario:", userAllowedGroups);
+
+    // Filtramos las apps del tenant contra los permisos del usuario
+    const filtered = session.apps.filter((app) =>
+      userAllowedGroups.includes(app.appId),
+    );
+
     console.log(
-      "Apps permitidas para el usuario:",
-      session.apps.map((a) => a.appId),
+      "Apps finales tras filtro:",
+      filtered.map((a) => a.appId),
     );
     console.groupEnd();
 
-    // El usuario corporativo debe ver todo lo que tiene contratado.
-    return session.apps;
-  }, [session?.apps]);
+    return filtered;
+  }, [session?.apps, session?.user?.group]);
 
   /*const handleOperatorVerifySuccess = (operator: UserSession) => {
     setActiveOperator(operator);
