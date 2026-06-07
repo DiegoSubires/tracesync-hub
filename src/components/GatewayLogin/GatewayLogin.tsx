@@ -41,7 +41,7 @@ export default function GatewayLogin({ onLoginSuccess }: GatewayLoginProps) {
       // --- NUEVO LOG DE AUDITORÍA ---
       console.group("🔑 [GatewayLogin] Respuesta del Servidor");
       console.log("Usuario:", sessionData.user?.name);
-      console.log("Grupos/Permisos del usuario:", sessionData.user?.group); // <--- Verificar qué devuelve el back
+      console.log("Grupos/Permisos del usuario:", sessionData.user?.group);
       console.log(
         "Apps totales recibidas:",
         sessionData.apps?.map((a) => a.appId),

@@ -17,9 +17,23 @@ const DEFAULT_TENANT = {
 };*/
 
 export default function App() {
-  const [session, setSession] = useState<AuthSessionState | null>(() =>
+  const [session, setSession] = useState<AuthSessionState | null>(() => {
+    const data = SessionService.get();
+    console.group("🔍 [DEBUG] Carga de Sesión Inicial");
+    console.log("Datos recuperados de SessionService:", data);
+    console.log(
+      "Apps detectadas:",
+      data?.apps?.map((a) => a.appId),
+    );
+    console.log("Grupos del usuario:", data?.user?.group);
+    console.groupEnd();
+    return data;
+  });
+
+  /*const [session, setSession] = useState<AuthSessionState | null>(() =>
     SessionService.get(),
-  );
+  );*/
+
   /*const [session, setSession] = useState<AuthSessionState | null>(() => {
     const data = SessionService.get();
     // LOG: Auditoría de carga inicial
