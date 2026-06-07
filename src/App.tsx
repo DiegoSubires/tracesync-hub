@@ -240,7 +240,14 @@ export default function App() {
         setScreen={setScreen}
         apps={allowedApps}
         selectedModule={selectedModule}
-        onLoginSuccess={setSession}
+        //onLoginSuccess={setSession}
+        onLoginSuccess={(data) => {
+          console.log(
+            "🎯 [App.tsx] onLoginSuccess recibido. Ejecutando setSession...",
+          );
+          setSession(data);
+          setScreen("HUB");
+        }}
         onSelectModule={handleSelectModule}
         onOperatorVerifySuccess={handleOperatorVerifySuccess}
         onExitModule={() => setScreen("HUB")}
