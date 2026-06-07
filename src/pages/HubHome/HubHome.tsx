@@ -9,14 +9,7 @@ interface HubHomeProps {
 }
 
 export default function HubHome({ apps = [], onSelectModule }: HubHomeProps) {
-  console.log("🛠️ [HubHome] Apps recibidas para renderizado:", apps);
-  console.log(
-    "🖥️ [HubHome] Renderizando tarjetas para:",
-    apps.map((a) => a.name),
-  );
-
   const handleAppClick = (appId: string) => {
-    //console.log("🔍 [HubHome] Click detectado en app:", appId);
     onSelectModule(appId);
   };
 

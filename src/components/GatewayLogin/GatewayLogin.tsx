@@ -13,23 +13,6 @@ export default function GatewayLogin({ onLoginSuccess }: GatewayLoginProps) {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  /*const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const sessionData = await AuthService.login(email, password);
-      onLoginSuccess(sessionData);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Ocurrió un error desconocido al iniciar sesión");
-      }
-      setLoading(false);
-    }
-  };*/
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -38,19 +21,7 @@ export default function GatewayLogin({ onLoginSuccess }: GatewayLoginProps) {
     try {
       const sessionData = await AuthService.login(email, password);
 
-      // --- NUEVO LOG DE AUDITORÍA ---
-      console.group("🔑 [GatewayLogin] Respuesta del Servidor");
-      console.log("Usuario:", sessionData.user?.name);
-      console.log("Grupos/Permisos del usuario:", sessionData.user?.group);
-      console.log(
-        "Apps totales recibidas:",
-        sessionData.apps?.map((a) => a.appId),
-      );
-      console.groupEnd();
-      // ------------------------------
-
       onLoginSuccess(sessionData);
-      console.log("✅ [GatewayLogin] Inicio de sesión exitoso para:", email);
     } catch (err: unknown) {
       //console.error("❌ [GatewayLogin] Error capturado:", err);
       if (err instanceof Error) {
