@@ -42,33 +42,45 @@ export default function App() {
   >("COMPANY_LOGIN");
 
   const allowedApps = useMemo(() => {
+    // El usuario logueado tiene acceso a las apps definidas en su campo 'group'
     if (!session?.apps) return [];
 
-    if (!activeOperator) return [];
-
-    console.group("🛡️ [DEBUG] Control de Acceso");
-    console.log("Grupo del Operador:", activeOperator.group);
-
-    const filtered = session.apps.filter(
-      (app) => app.appId === activeOperator.group,
-    );
-
+    console.group("🛡️ [DEBUG] Carga de catálogo corporativo");
     console.log(
-      "Apps permitidas:",
-      filtered.map((a) => a.appId),
+      "Apps permitidas para el usuario:",
+      session.apps.map((a) => a.appId),
     );
     console.groupEnd();
 
-    return filtered;
-  }, [session?.apps, activeOperator]);
+    // El usuario corporativo debe ver todo lo que tiene contratado.
+    return session.apps;
+  }, [session?.apps]);
 
-  const handleOperatorVerifySuccess = (operator: UserSession) => {
+  /*const handleOperatorVerifySuccess = (operator: UserSession) => {
     setActiveOperator(operator);
     // Una vez verificado, procedemos a la redirección usando el ID guardado
     if (selectedModule) {
       const app = session!.apps.find((a) => a.appId === selectedModule);
       if (app)
         RedirectionService.execute(app, operator, session!.tenant!.tenantId);
+    }
+  };*/
+
+  const handleOperatorVerifySuccess = (operator: UserSession) => {
+    setActiveOperator(operator);
+
+    // CAMBIO: Buscamos en allowedApps en lugar de session.apps
+    if (selectedModule) {
+      const app = allowedApps.find((a) => a.appId === selectedModule);
+      if (app) {
+        RedirectionService.execute(app, operator, session!.tenant!.tenantId);
+      } else {
+        console.error(
+          "Acceso denegado: El módulo seleccionado no está en las apps permitidas.",
+        );
+      }
+    } else {
+      setScreen("HUB");
     }
   };
 
@@ -206,7 +218,7 @@ export default function App() {
       <AppRouter
         screen={screen}
         setScreen={setScreen}
-        apps={allowedApps} // <--- Usamos la lista filtrada
+        apps={allowedApps}
         selectedModule={selectedModule}
         onLoginSuccess={setSession}
         onSelectModule={handleSelectModule}
